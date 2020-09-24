@@ -1,0 +1,16 @@
+{
+  "name": "funnybot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Fillip Serov",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^12.2.0",
+    "forever": "^3.0.0",
+    "sqlite3-wrapper": "^1.1.1"
+  }
+}

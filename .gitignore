@@ -1,0 +1,4 @@
+config.json
+.foreverignore
+node_modules
+data
