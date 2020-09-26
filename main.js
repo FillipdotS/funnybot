@@ -63,7 +63,7 @@ function sayHelp(channel) {
     fullMsg += 'f!help - Shows this\n';
     fullMsg += 'f!give <user> - Give a funnypoint to someone\n';
     fullMsg += 'f!stats <user> - Show your funnypoints off\n';
-    fullMsg += 'f!leaderboard - The funny gods\n';
+    fullMsg += 'f!leaderboard <page number> - The funny gods\n';
     fullMsg += 'f!say - Says your funny message\n';
     fullMsg += 'f!take <user> - You wouldn\'t dare...';
 
@@ -133,19 +133,35 @@ function sayMsg(message, toSay) {
 }
 
 function makeLeaderboard(message) {
+    let pageNum = 1;
+
+    if (message.content.slice(13).length > 0) {
+        pageNum = Math.round(message.content.slice(13));
+        if (isNaN(pageNum) || pageNum < 1) {
+            message.channel.send("Bad page argument: must be 1 or higher.");
+            return;
+        }
+    }
+
     const guildFile = './data/guild' + message.guild.id + '.json'
 
     fs.readFile(guildFile, async (err, data) => {
         if (err) return console.log(err);
 
         guildData = JSON.parse(data);
+        let maximumPages = Math.ceil(guildData.users.length / 10);
+
+        if (pageNum > maximumPages) {
+            message.channel.send("Bad page argument: page too high.");
+            return;
+        }
 
         const toShowData = guildData.users.sort((a, b) => {
             return b.points - a.points;
         }).filter((user) => {
             // If a person isnt on the server, filter them out
             return message.guild.member(user.user);
-        }).slice(0, 10);
+        }).slice((pageNum-1)*10, pageNum*10);
 
         let toShowText = '';
         for (i = 0; i < toShowData.length; i++) {
@@ -153,7 +169,7 @@ function makeLeaderboard(message) {
 
             let nickname = message.guild.member(toShowData[i].user).displayName;
 
-            toShowText += '**' + (i+1) + '.** ';
+            toShowText += '**' + ((i+1) + ((pageNum-1)*10) ) + '.** ';
             toShowText += nickname;
             toShowText += ' - :rofl: ' + toShowData[i].points + '\n';
         }
@@ -161,6 +177,7 @@ function makeLeaderboard(message) {
         const leadEmbed = new Discord.MessageEmbed()
             .setColor('#f5d742')
             .setTitle('The funniest of ' + message.guild.name)
+            .setFooter('Page ' + pageNum + ' of ' + maximumPages)
             .setDescription(toShowText);
         message.channel.send(leadEmbed);
     });
