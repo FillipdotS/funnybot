@@ -142,19 +142,16 @@ function makeLeaderboard(message) {
 
         const toShowData = guildData.users.sort((a, b) => {
             return b.points - a.points;
+        }).filter((user) => {
+            // If a person isnt on the server, filter them out
+            return message.guild.member(user.user);
         }).slice(0, 10);
 
         let toShowText = '';
         for (i = 0; i < toShowData.length; i++) {
             const user = await client.users.fetch(toShowData[i].user);
 
-            let nickname;
-
-            try {
-                nickname = message.guild.member(toShowData[i].user).displayName;
-            } catch (e) {
-                nickname = "Unknown User";
-            }
+            let nickname = message.guild.member(toShowData[i].user).displayName;
 
             toShowText += '**' + (i+1) + '.** ';
             toShowText += nickname;
