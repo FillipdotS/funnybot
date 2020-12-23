@@ -3,4 +3,4 @@ A discord bot made in a couple of days mostly as joke between friends. Users can
 
 The bots "database" consists of just json files for each server which is _**incredibly**_ inefficient.
 
-![Chat picture](funnnybot.PNG)
+![Chat picture](funnybot.PNG)
